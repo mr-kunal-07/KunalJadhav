@@ -30,7 +30,7 @@ const useCounter = (end: number, duration = 2000, start = false) => {
 
 const STATS = [
   { icon: <Code2 size={24} />, value: 7000, suffix: "+", label: "Hours of Coding" },
-  { icon: <Layers size={24} />, value: 10, suffix: "+", label: "Technologies" },
+  { icon: <Layers size={24} />, value: 40, suffix: "+", label: "Technologies" },
   { icon: <Calendar size={24} />, value: 5, suffix: "+", label: "Year Experience" },
   { icon: <Coffee size={24} />, value: 550, suffix: "+", label: "LeetCode Solved" },
 ];

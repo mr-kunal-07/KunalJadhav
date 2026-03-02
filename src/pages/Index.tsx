@@ -1,6 +1,6 @@
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Globe, Trophy, GraduationCap, Briefcase,
   Home, User, Code, Mail, Github, Linkedin,
@@ -195,13 +195,42 @@ const AboutMe = () => (
 );
 
 // ========== FLOATING NAV ==========
+const DOCK_HEIGHT = 40; // approximate height of FloatingDock in px
+const DEFAULT_BOTTOM = 24; // bottom-6 = 24px
+
 const FloatingNav = () => {
+  const [bottomOffset, setBottomOffset] = useState(DEFAULT_BOTTOM);
+
+  useEffect(() => {
+    const footer = document.querySelector("footer");
+    if (!footer) return;
+
+    const update = () => {
+      const footerTop = footer.getBoundingClientRect().top;
+      const viewportHeight = window.innerHeight;
+
+      // When footer border enters viewport, lift dock to sit on it
+      const stickyBottom = viewportHeight - footerTop - DOCK_HEIGHT / 2;
+
+      setBottomOffset(stickyBottom > DEFAULT_BOTTOM ? stickyBottom : DEFAULT_BOTTOM);
+    };
+
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update, { passive: true });
+    update(); // run once on mount
+
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
   const scrollToSection = (id: string) => {
     if (id === "top") window.scrollTo({ top: 0, behavior: "smooth" });
     else document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const links = [
+
+  const NAV_LINKS = [
     { title: "Home", icon: <Home className="h-full w-full text-foreground" />, href: "#", onClick: () => scrollToSection("top") },
     { title: "About", icon: <User className="h-full w-full text-foreground" />, href: "#about", onClick: () => scrollToSection("about") },
     { title: "Experience", icon: <Briefcase className="h-full w-full text-foreground" />, href: "#experience", onClick: () => scrollToSection("experience") },
@@ -210,13 +239,16 @@ const FloatingNav = () => {
     { title: "GitHub", icon: <Github className="h-full w-full text-foreground" />, href: "https://github.com/mr-kunal-07/", target: "_blank" },
     { title: "LinkedIn", icon: <Linkedin className="h-full w-full text-foreground" />, href: "https://www.linkedin.com/in/kunaljadhav4295/", target: "_blank" },
   ];
-
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-      <FloatingDock items={links} />
+    <div
+      className="fixed left-1/2 -translate-x-1/2 z-50 transition-[bottom] duration-150 ease-out"
+      style={{ bottom: bottomOffset }}
+    >
+      <FloatingDock items={NAV_LINKS} />
     </div>
   );
 };
+
 
 // ========== MAIN PAGE ==========
 const Index = () => (
@@ -231,20 +263,43 @@ const Index = () => (
     <Contact />
     <FloatingNav />
     <BackToTop />
-    <footer className="text-muted-foreground text-sm border-t border-border mb-10 pt-10 flex items-center justify-around gap-56">
-      © 2025 Kunal Jadhav. All rights reserved.
+    <footer
+      className="
+  border-t border-border 
+  flex flex-col items-center gap-4 text-center
+  sm:flex-row sm:justify-between sm:text-left sm:gap-6 px-6 py-6 
+"
+    >
+      <p className="text-muted-foreground text-sm">
+        © {new Date().getFullYear()} Kunal Jadhav. All rights reserved.
+      </p>
+
       <div className="flex items-center gap-2">
+
         <ThemeToggle />
-        <a href="https://github.com/mr-kunal-07/" target="_blank" rel="noreferrer" aria-label="GitHub"
-          className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary text-foreground transition-colors hover:bg-accent">
+        <a
+          href="https://github.com/mr-kunal-07/"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="GitHub"
+          className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary text-foreground transition-colors duration-200 hover:bg-accent"
+        >
           <Github className="w-4 h-4" />
         </a>
-        <a href="https://www.linkedin.com/in/kunaljadhav4295" target="_blank" rel="noreferrer" aria-label="LinkedIn"
-          className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary text-foreground transition-colors hover:bg-accent">
+        <a
+          href="https://www.linkedin.com/in/kunaljadhav4295"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="LinkedIn"
+          className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary text-foreground transition-colors duration-200 hover:bg-accent"
+        >
           <Linkedin className="w-4 h-4" />
         </a>
-        <a href="mailto:dev.kunaljadhav@gmail.com" aria-label="Email"
-          className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary text-foreground transition-colors hover:bg-accent">
+        <a
+          href="mailto:dev.kunaljadhav@gmail.com"
+          aria-label="Email"
+          className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary text-foreground transition-colors duration-200 hover:bg-accent"
+        >
           <Mail className="w-4 h-4" />
         </a>
       </div>

@@ -62,7 +62,7 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="section-container min-h-screen flex items-center pt-16 relative overflow-hidden"
+      className="section-container py-40 sm:py-52 flex items-center  relative overflow-hidden"
     >
       <div className="grid md:grid-cols-2 gap-12 items-center w-full">
 
