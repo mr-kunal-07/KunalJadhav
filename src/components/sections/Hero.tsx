@@ -1,21 +1,33 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowDown, FileText, ChevronLeft, ChevronRight } from "lucide-react";
 
-const ROLES = ["Full Stack Developer", "Frontend Developer", "React Developer", "MERN Stack Developer"];
+/* ────────────────────────────────────────────── */
+/* DATA */
+/* ────────────────────────────────────────────── */
 
-const SLIDES = [
-  { image: "/kunal1.jpeg", title: "Kunal Jadhav" },
-  { image: "/Kunal2.jpeg", title: "Me In the Office" },
-  { image: "/Px.jpeg", title: "My 1st Love" },
+const ROLES = [
+  "Full Stack Developer",
+  "Frontend Developer",
+  "React Developer",
+  "MERN Stack Developer",
 ];
 
-/* ─── Typewriter hook (leak-safe) ─── */
-const useTypewriter = (words: string[], speed = 100, pause = 2000) => {
+const SLIDES = [
+  { image: "/hero/bgkunal1.webp", title: "Kunal Jadhav" },
+  { image: "/hero/bgkunal2.webp", title: "Me In the Office" },
+  { image: "/hero/Px.webp", title: "My 1st Love" },
+];
+
+/* ────────────────────────────────────────────── */
+/* TYPEWRITER (Leak Safe) */
+/* ────────────────────────────────────────────── */
+
+const useTypewriter = (words, speed = 100, pause = 2000) => {
   const [text, setText] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const pauseTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pauseTimeout = useRef(null);
 
   useEffect(() => {
     const current = words[wordIndex];
@@ -24,12 +36,17 @@ const useTypewriter = (words: string[], speed = 100, pause = 2000) => {
       if (!isDeleting) {
         const next = current.slice(0, text.length + 1);
         setText(next);
+
         if (next === current) {
-          pauseTimeout.current = setTimeout(() => setIsDeleting(true), pause);
+          pauseTimeout.current = setTimeout(
+            () => setIsDeleting(true),
+            pause
+          );
         }
       } else {
         const next = current.slice(0, text.length - 1);
         setText(next);
+
         if (next === "") {
           setIsDeleting(false);
           setWordIndex((i) => (i + 1) % words.length);
@@ -46,142 +63,125 @@ const useTypewriter = (words: string[], speed = 100, pause = 2000) => {
   return text;
 };
 
-/* ─── Hero ─── */
+/* ────────────────────────────────────────────── */
+/* HERO COMPONENT */
+/* ────────────────────────────────────────────── */
+
 const Hero = () => {
   const typed = useTypewriter(ROLES);
   const [current, setCurrent] = useState(0);
 
-  const next = useCallback(() => setCurrent((c) => (c + 1) % SLIDES.length), []);
-  const prev = useCallback(() => setCurrent((c) => (c - 1 + SLIDES.length) % SLIDES.length), []);
+  const next = useCallback(
+    () => setCurrent((c) => (c + 1) % SLIDES.length),
+    []
+  );
 
+  const prev = useCallback(
+    () => setCurrent((c) => (c - 1 + SLIDES.length) % SLIDES.length),
+    []
+  );
+
+  // Auto-slide (safe interval)
   useEffect(() => {
-    const timer = setInterval(next, 4000);
+    const timer = setInterval(next, 1900);
     return () => clearInterval(timer);
   }, [next]);
 
   return (
     <section
       id="home"
-      className="section-container py-40 sm:py-52 flex items-center  relative overflow-hidden"
+      className="section-container py-40 sm:py-52 flex items-center relative overflow-hidden"
     >
       <div className="grid md:grid-cols-2 gap-12 items-center w-full">
 
-        {/* ── Left: Text ── */}
+        {/* ───────── LEFT TEXT ───────── */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <motion.p
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-muted-foreground text-lg mb-2"
-          >
+          <p className="text-muted-foreground text-lg mb-2">
             Hi, I'm
-          </motion.p>
+          </p>
 
-          <motion.h1
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-5xl md:text-6xl font-bold mb-3 text-foreground"
-          >
+          <h1 className="text-5xl md:text-6xl font-bold mb-3 text-foreground">
             Kunal Jadhav
-          </motion.h1>
+          </h1>
 
           <p className="text-xl md:text-2xl mb-4 text-muted-foreground">
             I am a{" "}
-            <span className="text-foreground font-semibold">{typed}</span>
+            <span className="text-foreground font-semibold">
+              {typed}
+            </span>
             <span className="animate-pulse text-foreground">|</span>
           </p>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="text-muted-foreground leading-relaxed mb-8 max-w-xl text-base"
-          >
+          <p className="text-muted-foreground leading-relaxed mb-8 max-w-xl text-base">
             Full Stack Developer focused on building{" "}
-            {/* ✅ was text-zinc-100 — hardcoded white, invisible in light mode */}
-            <span className="text-foreground font-medium">scalable, high-performance, AI-powered</span>{" "}
-            software solutions. Startup enthusiast driven to take ideas from 0 &rarr; 1.
-          </motion.p>
+            <span className="text-foreground font-medium">
+              scalable, high-performance, AI-powered
+            </span>{" "}
+            software solutions. Startup enthusiast driven to take ideas from 0 → 1.
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="flex flex-wrap gap-3"
-          >
+          <div className="flex flex-wrap gap-3">
             <a href="#projects" className="hero-button-primary group">
-              <ArrowDown size={16} className="group-hover:translate-y-0.5 transition-transform" />
+              <ArrowDown
+                size={16}
+                className="group-hover:translate-y-0.5 transition-transform"
+              />
               View my work
             </a>
+
             <a
               href="/Kunal.pdf"
               target="_blank"
               rel="noreferrer"
               className="hero-button-outline group"
             >
-              <FileText size={16} className="group-hover:rotate-3 transition-transform" />
+              <FileText
+                size={16}
+                className="group-hover:rotate-3 transition-transform"
+              />
               My Resume
             </a>
-          </motion.div>
+          </div>
         </motion.div>
 
-        {/* ── Right: Image Slider ── */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex justify-center"
-        >
+        {/* ───────── RIGHT IMAGE (LCP OPTIMIZED) ───────── */}
+        <div className="flex justify-center">
           <div className="relative w-72 h-72 md:w-96 md:h-96 rounded-2xl overflow-hidden border border-border shadow-lg group">
 
-            {/* Slides */}
-            <AnimatePresence mode="wait">
-              <motion.img
-                key={current}
-                src={SLIDES[current].image}
-                alt={SLIDES[current].title}
-                initial={{ opacity: 0, scale: 1.08 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.5 }}
-                className="w-full h-full object-cover"
-              />
-            </AnimatePresence>
+            {/* 🔥 LCP OPTIMIZED IMAGE (NO SCALE ANIMATION) */}
+            <img
+              src={SLIDES[current].image}
+              alt={SLIDES[current].title}
+              loading={current === 0 ? "eager" : "lazy"}
+              fetchPriority={current === 0 ? "high" : "auto"}
+              className="w-full h-full object-cover transition-opacity duration-500"
+            />
 
-            {/* Bottom gradient + title */}
+            {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80 flex items-end justify-center p-4 pointer-events-none">
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={current}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.3 }}
-                  className="text-background text-xs tracking-wider bg-foreground rounded px-1.5 py-0.5 font-semibold"
-                >
-                  {SLIDES[current].title}
-                </motion.p>
-              </AnimatePresence>
+              <p className="text-background text-xs tracking-wider bg-foreground rounded px-1.5 py-0.5 font-semibold">
+                {SLIDES[current].title}
+              </p>
             </div>
 
-            {/* Dot indicators */}
+            {/* Dots */}
             <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-1.5 pointer-events-none">
               {SLIDES.map((_, i) => (
-                <motion.div
+                <div
                   key={i}
-                  animate={{ width: i === current ? 20 : 6, opacity: i === current ? 1 : 0.4 }}
-                  transition={{ duration: 0.3 }}
-                  className="h-1.5 rounded-full bg-foreground"
+                  className={`h-1.5 rounded-full transition-all duration-300 ${i === current
+                    ? "w-5 bg-foreground opacity-100"
+                    : "w-1.5 bg-foreground opacity-40"
+                    }`}
                 />
               ))}
             </div>
 
-            {/* Prev / Next arrows */}
+            {/* Arrows */}
             <button
               onClick={prev}
               aria-label="Previous slide"
@@ -189,6 +189,7 @@ const Hero = () => {
             >
               <ChevronLeft size={16} />
             </button>
+
             <button
               onClick={next}
               aria-label="Next slide"
@@ -196,8 +197,9 @@ const Hero = () => {
             >
               <ChevronRight size={16} />
             </button>
+
           </div>
-        </motion.div>
+        </div>
 
       </div>
     </section>

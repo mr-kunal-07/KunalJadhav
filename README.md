@@ -1,73 +1,116 @@
-# Welcome to your Lovable project
+# 🚀 Kunal Jadhav — Personal Portfolio
 
-## Project info
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+🌐 [Live Demo](https://kunaltech.vercel.app) &nbsp;|&nbsp; 💼 [LinkedIn](https://linkedin.com/in/kunaljadhav4295) &nbsp;|&nbsp; 🐦 [Twitter](https://twitter.com/_kunaljadhav_23_)
 
-## How can I edit this code?
 
-There are several ways of editing your application.
+## 🛠 Tech Stack
 
-**Use Lovable**
+| Category | Technology |
+|---|---|
+| **Framework** | React 18 |
+| **Language** | TypeScript |
+| **Build Tool** | Vite |
+| **Styling** | Tailwind CSS |
+| **UI Components** | shadcn/ui |
+| **Linting** | ESLint |
+| **Testing** | Vitest |
+| **Package Manager** | npm |
+| **Deployment** | Vercel |
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 📁 Project Structure
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+KunalJadhav/
+├── public/                 # Static assets (images, icons, etc.)
+├── src/                    # Application source code
+│   ├── components/         # Reusable UI components
+│   ├── pages/              # Page-level components
+│   ├── hooks/              # Custom React hooks
+│   ├── lib/                # Utility functions and helpers
+│   └── main.tsx            # Application entry point
+├── components.json         # shadcn/ui configuration
+├── tailwind.config.ts      # Tailwind CSS configuration
+├── vite.config.ts          # Vite build configuration
+├── vitest.config.ts        # Vitest test configuration
+├── tsconfig.json           # TypeScript configuration
+└── index.html              # HTML entry point
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🚀 Getting Started
 
-**Use GitHub Codespaces**
+### Prerequisites
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Make sure you have the following installed:
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [npm](https://www.npmjs.com/) or [Bun](https://bun.sh/)
 
-## What technologies are used for this project?
+### Installation
 
-This project is built with:
+```bash
+# 1. Clone the repository
+git clone https://github.com/mr-kunal-07/KunalJadhav.git
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+# 2. Navigate into the project directory
+cd KunalJadhav
 
-## How can I deploy this project?
+# 3. Install dependencies
+npm install
+# or with Bun
+bun install
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+# 4. Start the development server
+npm run dev
+# or
+bun dev
+```
 
-## Can I connect a custom domain to my Lovable project?
+The app will be live at **http://localhost:8080** (or whichever port Vite assigns).
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 📜 Available Scripts
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+| Script | Description |
+|---|---|
+| `npm run dev` | Start the local development server with HMR |
+| `npm run build` | Create an optimized production build |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint across the codebase |
+| `npm run test` | Run unit tests via Vitest |
+
+---
+
+## 🌍 Deployment
+
+This project is deployed on **Vercel**. Every push to the `main` branch triggers an automatic deployment.
+
+To deploy your own fork:
+
+1. Fork this repository
+2. Go to [vercel.com](https://vercel.com) and import your forked repo
+3. Vercel will auto-detect the Vite framework settings
+4. Click **Deploy** — that's it!
+
+You can also connect a custom domain via **Project → Settings → Domains** on Vercel.
+
+---
+
+## 📬 Connect with Me
+
+I'm always open to collaborating on exciting full-stack projects!
+
+- 🌐 **Portfolio:** [kunaljadhav.vercel.app](https://kunaltech.vercel.app)
+- 💼 **LinkedIn:** [linkedin.com/in/kunaljadhav4295](https://linkedin.com/in/kunaljadhav4295)
+- 🐦 **Twitter:** [@_kunaljadhav_23_](https://twitter.com/_kunaljadhav_23_)
+- 💻 **GitHub:** [@mr-kunal-07](https://github.com/mr-kunal-07)
+
+---
+
+Made with ❤️ by **Kunal Jadhav**
+
+⭐ If you like this project, consider giving it a star!
