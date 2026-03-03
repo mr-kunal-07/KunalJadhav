@@ -231,9 +231,8 @@ const CardWithOfferLetter = ({
   return (
     <div
       className="relative"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+      onMouseEnter={() => window.innerWidth >= 768 && setHovered(true)}
+      onMouseLeave={() => window.innerWidth >= 768 && setHovered(false)}    >
       <AnimatePresence>
         {hovered && offerLetterImage && (
           <OfferLetterPopup
@@ -347,8 +346,15 @@ const Experience = () => (
           return (
             <motion.div
               key={i}
-              initial={{ opacity: 0, x: side === "left" ? -40 : 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{
+                opacity: 0,
+                x: typeof window !== "undefined" && window.innerWidth < 768
+                  ? 0
+                  : side === "left"
+                    ? -40
+                    : 40,
+                y: 20,
+              }} whileInView={{ opacity: 1, x: 0, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, delay: i * 0.15 }}
               className={`relative flex flex-col md:flex-row items-start gap-6 ${side === "left" ? "md:flex-row" : "md:flex-row-reverse"}`}

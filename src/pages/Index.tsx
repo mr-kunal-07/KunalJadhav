@@ -1,10 +1,11 @@
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Globe, Trophy, GraduationCap, Briefcase,
   Home, User, Code, Mail, Github, Linkedin,
   Link,
+  Download,
 } from "lucide-react";
 import { FloatingDock } from "@/components/FloatingDock";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -28,30 +29,70 @@ const AnimatedSection = ({ children, className = "" }: { children: React.ReactNo
 };
 
 // ========== HEADER ==========
-const Header = () => (
-  <header className="py-6 w-full fixed top-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-md border-b border-border">
-    <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-      <a href="#" className="text-2xl font-medium" style={{ fontFamily: "var(--font-mono)" }}>
-        <span className="gradient-text">Kunal</span>
-      </a>
-      <div className="flex items-center gap-2">
-        <ThemeToggle />
-        <a href="https://github.com/mr-kunal-07/" target="_blank" rel="noreferrer" aria-label="GitHub"
-          className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary text-foreground transition-colors hover:bg-accent">
-          <Github className="w-4 h-4" />
+const Header = () => {
+  const promptRef = useRef<(Event & { prompt: () => Promise<void> }) | null>(null);
+  const [canInstall, setCanInstall] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      promptRef.current = e as Event & { prompt: () => Promise<void> };
+      setCanInstall(true);
+    };
+    const installed = () => setCanInstall(false);
+
+    window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener("appinstalled", installed);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+      window.removeEventListener("appinstalled", installed);
+    };
+  }, []);
+
+  const handleInstall = async () => {
+    if (!promptRef.current) return;
+    await promptRef.current.prompt();
+    promptRef.current = null;
+    setCanInstall(false);
+  };
+
+  return (
+    <header className="py-6 w-full fixed top-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-md border-b border-border">
+      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <a href="#" className="text-2xl font-medium" style={{ fontFamily: "var(--font-mono)" }}>
+          <span className="gradient-text">Kunal</span>
         </a>
-        <a href="https://www.linkedin.com/in/kunal-jadhav" target="_blank" rel="noreferrer" aria-label="LinkedIn"
-          className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary text-foreground transition-colors hover:bg-accent">
-          <Linkedin className="w-4 h-4" />
-        </a>
-        <a href="mailto:kunaljadhav@example.com" aria-label="Email"
-          className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary text-foreground transition-colors hover:bg-accent">
-          <Mail className="w-4 h-4" />
-        </a>
+        <div className="flex items-center gap-2">
+
+          {canInstall && (
+            <button
+              onClick={handleInstall}
+              aria-label="Install App"
+              className="hero-button-primary group gap-1.5 px-2.5 py-2 rounded-full"
+            >
+              <Download className="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
+              <span className="hidden sm:inline text-[0.8rem]">Install App</span>
+            </button>
+          )}
+
+          <ThemeToggle />
+          <a href="https://github.com/mr-kunal-07/" target="_blank" rel="noreferrer" aria-label="GitHub"
+            className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary text-foreground transition-colors hover:bg-accent">
+            <Github className="w-4 h-4" />
+          </a>
+          <a href="https://www.linkedin.com/in/kunal-jadhav" target="_blank" rel="noreferrer" aria-label="LinkedIn"
+            className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary text-foreground transition-colors hover:bg-accent">
+            <Linkedin className="w-4 h-4" />
+          </a>
+          <a href="mailto:kunaljadhav@example.com" aria-label="Email"
+            className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary text-foreground transition-colors hover:bg-accent">
+            <Mail className="w-4 h-4" />
+          </a>
+        </div>
       </div>
-    </div>
-  </header>
-);
+    </header>
+  );
+};
 
 // ========== ABOUT ME ==========
 const AboutMe = () => (

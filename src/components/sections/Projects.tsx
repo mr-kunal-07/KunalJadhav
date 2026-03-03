@@ -3,7 +3,6 @@ import { motion, useAnimation, useMotionValue, useTransform, useSpring } from "f
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import { ExternalLink, Github } from "lucide-react";
-import projectStudyzone from "@/assets/project-studyzone.jpg";
 import projectSaas from "@/assets/project-saas.jpg";
 import projectChat from "@/assets/project-chat.jpg";
 
@@ -47,7 +46,7 @@ const TiltCard = ({ children, className }: { children: React.ReactNode; classNam
   const y = useMotionValue(0);
 
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [8, -8]), { stiffness: 300, damping: 30 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-8, 8]), { stiffness: 300, damping: 30 });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), { stiffness: 300, damping: 30 });
 
   const handleMouse = (e: React.MouseEvent) => {
     if (!ref.current) return;
@@ -85,7 +84,7 @@ const Projects = () => (
       />
       <p className="section-subtitle">Here are some of my projects from my Web Development Journey.</p>
     </AnimatedSection>
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
       {PROJECTS.map((p, i) => (
         <AnimatedSection key={p.title}>
           <TiltCard className="glass-card flex flex-col h-full p-0 overflow-hidden group cursor-default">
@@ -95,7 +94,7 @@ const Projects = () => (
                 src={p.image}
                 alt={p.title}
                 loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               {/* Overlay on hover */}
               <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
