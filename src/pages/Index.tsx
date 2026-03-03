@@ -111,7 +111,15 @@ const AboutMe = () => (
         <div className="glass-card overflow-hidden p-0">
           <div className="relative group">
             <div className="aspect-square overflow-hidden">
-              <img src='/gib-kunal.png' alt="Kunal Jadhav" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img
+                src="/gib-kunal.jpg"
+                alt="Kunal Jadhav portrait"
+                loading="lazy"
+                decoding="async"
+                width="400"
+                height="400"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
             </div>
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80 flex items-end p-6">
               <div>
@@ -246,14 +254,24 @@ const FloatingNav = () => {
     const footer = document.querySelector("footer");
     if (!footer) return;
 
+    let ticking = false;
+
     const update = () => {
-      const footerTop = footer.getBoundingClientRect().top;
-      const viewportHeight = window.innerHeight;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const footerTop = footer.getBoundingClientRect().top;
+          const viewportHeight = window.innerHeight;
+          const stickyBottom = viewportHeight - footerTop - DOCK_HEIGHT / 2;
 
-      // When footer border enters viewport, lift dock to sit on it
-      const stickyBottom = viewportHeight - footerTop - DOCK_HEIGHT / 2;
+          setBottomOffset(
+            stickyBottom > DEFAULT_BOTTOM ? stickyBottom : DEFAULT_BOTTOM
+          );
 
-      setBottomOffset(stickyBottom > DEFAULT_BOTTOM ? stickyBottom : DEFAULT_BOTTOM);
+          ticking = false;
+        });
+
+        ticking = true;
+      }
     };
 
     window.addEventListener("scroll", update, { passive: true });
@@ -297,11 +315,15 @@ const Index = () => (
     <LoadingScreen />
     <ScrollProgress />
     <Header />
-    <Hero />
-    <AboutMe />
-    <Experience />
-    <Projects />
-    <Contact />
+
+    <main>
+      <Hero />
+      <AboutMe />
+      <Experience />
+      <Projects />
+      <Contact />
+    </main>
+
     <FloatingNav />
     <BackToTop />
     <footer
