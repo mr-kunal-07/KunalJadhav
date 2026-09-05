@@ -1,8 +1,11 @@
-import { createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { registerSW } from "virtual:pwa-register";
 
 registerSW({ immediate: true });
 
-createRoot(document.getElementById("root")!).render(<App />);
+const root = document.getElementById("root")!;
+const route = window.location.pathname.replace(/\/$/, "") || "/";
+if (root.dataset.prerendered === route) hydrateRoot(root, <App />);
+else createRoot(root).render(<App />);

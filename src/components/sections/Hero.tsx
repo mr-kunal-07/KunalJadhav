@@ -1,209 +1,185 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowDown, FileText, ChevronLeft, ChevronRight } from "lucide-react";
-
-/* ────────────────────────────────────────────── */
-/* DATA */
-/* ────────────────────────────────────────────── */
-
-const ROLES = [
-  "Full Stack Developer",
-  "Frontend Developer",
-  "React Developer",
-  "MERN Stack Developer",
-];
-
 const SLIDES = [
-  { image: "/hero/bgkunal1.webp", title: "Kunal Jadhav" },
-  { image: "/hero/bgkunal2.webp", title: "Me In the Office" },
-  { image: "/hero/Px.webp", title: "My 1st Love" },
+  { image: "/hero/developer-768.webp", small: "/hero/developer-384.webp", title: "I am a Developer", alt: "Kunal Jadhav, Full Stack Developer, in a white suit" },
+  { image: "/hero/office-768.webp", small: "/hero/office-384.webp", title: "Me In the Office", alt: "Kunal Jadhav working on a laptop in the office" },
+  { image: "/hero/bike-768.webp", small: "/hero/bike-384.webp", title: "My 1st Love", alt: "Kunal Jadhav’s coding desk with a laptop and monitor" },
 ];
-
-/* ────────────────────────────────────────────── */
-/* TYPEWRITER (Leak Safe) */
-/* ────────────────────────────────────────────── */
-
-const useTypewriter = (words, speed = 100, pause = 2000) => {
-  const [text, setText] = useState("");
-  const [wordIndex, setWordIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const pauseTimeout = useRef(null);
-
-  useEffect(() => {
-    const current = words[wordIndex];
-
-    const tick = setTimeout(() => {
-      if (!isDeleting) {
-        const next = current.slice(0, text.length + 1);
-        setText(next);
-
-        if (next === current) {
-          pauseTimeout.current = setTimeout(
-            () => setIsDeleting(true),
-            pause
-          );
-        }
-      } else {
-        const next = current.slice(0, text.length - 1);
-        setText(next);
-
-        if (next === "") {
-          setIsDeleting(false);
-          setWordIndex((i) => (i + 1) % words.length);
-        }
-      }
-    }, isDeleting ? speed / 2 : speed);
-
-    return () => {
-      clearTimeout(tick);
-      if (pauseTimeout.current) clearTimeout(pauseTimeout.current);
-    };
-  }, [text, isDeleting, wordIndex, words, speed, pause]);
-
-  return text;
-};
-
-/* ────────────────────────────────────────────── */
-/* HERO COMPONENT */
-/* ────────────────────────────────────────────── */
-
-const Hero = () => {
-  const typed = useTypewriter(ROLES);
+export default function Hero() {
   const [current, setCurrent] = useState(0);
-
-  const next = useCallback(
-    () => setCurrent((c) => (c + 1) % SLIDES.length),
-    []
-  );
-
-  const prev = useCallback(
-    () => setCurrent((c) => (c - 1 + SLIDES.length) % SLIDES.length),
-    []
-  );
-
-  // Auto-slide (safe interval)
+  const paused = useRef(false);
+  const touchStart = useRef<number | null>(null);
+  const reduced = useReducedMotion();
+  const changeSlide = (direction: number) =>
+    setCurrent((c) => (c + direction + SLIDES.length) % SLIDES.length);
   useEffect(() => {
-    const timer = setInterval(next, 1900);
-    return () => clearInterval(timer);
-  }, [next]);
-
+    if (reduced) return;
+    const timer = window.setInterval(() => {
+      if (!paused.current && !document.hidden)
+        setCurrent((c) => (c + 1) % SLIDES.length);
+    }, 3000);
+    return () => window.clearInterval(timer);
+  }, [reduced]);
   return (
     <section
       id="home"
-      className="section-container py-40 sm:py-52 flex items-center relative overflow-hidden"
+      className="hero-shine section-container py-40 sm:py-52 flex items-center relative overflow-hidden isolate"
     >
-      <div className="grid md:grid-cols-2 gap-12 items-center w-full">
-
-        {/* ───────── LEFT TEXT ───────── */}
+      <div className="hero-wave-field" aria-hidden="true">
+        {[0, 1].map((wave) => (
+          <svg
+            key={wave}
+            className={`hero-wave${wave === 1 ? " hero-wave-secondary" : ""}`}
+            viewBox="0 0 1200 600"
+            preserveAspectRatio="none"
+            focusable="false"
+          >
+            <path
+              className="hero-wave-halo"
+              d="M-150 440 C150 440 240 90 530 240 S890 540 1350 160"
+            />
+            <path
+              className="hero-wave-light"
+              d="M-150 440 C150 440 240 90 530 240 S890 540 1350 160"
+            />
+            <path
+              className="hero-wave-edge"
+              d="M-150 440 C150 440 240 90 530 240 S890 540 1350 160"
+            />
+          </svg>
+        ))}
+      </div>
+      <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center w-full">
         <motion.div
-          initial={{ opacity: 0, y: 25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          initial={false}
+          animate={{ opacity: 1 }}
+          transition={{ duration: reduced ? 0 : 0.5 }}
+          className="flex flex-col"
         >
-          <p className="text-muted-foreground text-lg mb-2">
+          <p className="text-muted-foreground text-sm uppercase mb-2">
             Hi, I'm
           </p>
-
-          <h1 className="text-5xl md:text-6xl font-bold mb-3 text-foreground">
-            Kunal Jadhav
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight">
+            <span className="hero-name-shine">Kunal Jadhav</span>
           </h1>
-
-          <p className="text-xl md:text-2xl mb-4 text-muted-foreground">
-            I am a{" "}
-            <span className="text-foreground font-semibold">
-              {typed}
-            </span>
-            <span className="animate-pulse text-foreground">|</span>
+          <div className="flex items-center gap-2 mb-5">
+            <span className="text-muted-foreground">I am a</span>Full Stack
+            Developer
+          </div>
+          <p className="text-muted-foreground max-w-md mb-6">
+            I’m Kunal, a Full-Stack Developer building thoughtful web
+            experiences. Currently crafting frontends at IDSSPL.
           </p>
-
-          <p className="text-muted-foreground leading-relaxed mb-8 max-w-xl text-base">
-            Full Stack Developer focused on building{" "}
-            <span className="text-foreground font-medium">
-              scalable, high-performance, AI-powered
-            </span>{" "}
-            software solutions. Startup enthusiast driven to take ideas from 0 → 1.
-          </p>
-
-          <div className="flex flex-wrap gap-3">
-            <a href="#projects" className="hero-button-primary group">
-              <ArrowDown
-                size={16}
-                className="group-hover:translate-y-0.5 transition-transform"
-              />
+          <div className="flex gap-3 flex-wrap">
+            <a href="#projects" className="hero-button-primary">
+              <ArrowDown size={16} />
               View my work
             </a>
-
             <a
-              href="/Kunal.pdf"
+              href="/kunal-resume"
               target="_blank"
               rel="noreferrer"
-              className="hero-button-outline group"
+              className="hero-button-outline"
             >
-              <FileText
-                size={16}
-                className="group-hover:rotate-3 transition-transform"
-              />
+              <FileText size={16} />
               My Resume
             </a>
           </div>
         </motion.div>
-
-        {/* ───────── RIGHT IMAGE (LCP OPTIMIZED) ───────── */}
-        <div className="flex justify-center">
-          <div className="relative w-72 h-72 md:w-96 md:h-96 rounded-2xl overflow-hidden border border-border shadow-lg group">
-
-            {/* 🔥 LCP OPTIMIZED IMAGE (NO SCALE ANIMATION) */}
-            <img
-              src={SLIDES[current].image}
-              alt={SLIDES[current].title}
-              loading={current === 0 ? "eager" : "lazy"}
-              fetchPriority={current === 0 ? "high" : "auto"}
-              className="w-full h-full object-cover transition-opacity duration-500"
-            />
-
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80 flex items-end justify-center p-4 pointer-events-none">
-              <p className="text-background text-xs tracking-wider bg-foreground rounded px-1.5 py-0.5 font-semibold">
-                {SLIDES[current].title}
-              </p>
-            </div>
-
-            {/* Dots */}
-            <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-1.5 pointer-events-none">
-              {SLIDES.map((_, i) => (
-                <div
-                  key={i}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${i === current
-                    ? "w-5 bg-foreground opacity-100"
-                    : "w-1.5 bg-foreground opacity-40"
-                    }`}
+        <motion.div
+          initial={false}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: reduced ? 0 : 0.6 }}
+          className="flex justify-center"
+        >
+          <div
+            className="hero-photo-shine relative w-72 h-72 md:w-96 md:h-96 rounded-2xl overflow-hidden border border-border shadow-lg group"
+            aria-label="Portfolio photos"
+            aria-roledescription="carousel"
+            onMouseEnter={() => {
+              paused.current = true;
+            }}
+            onMouseLeave={() => {
+              paused.current = false;
+            }}
+            onFocusCapture={() => {
+              paused.current = true;
+            }}
+            onBlurCapture={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget))
+                paused.current = false;
+            }}
+            onTouchStart={(e) => {
+              touchStart.current = e.touches[0].clientX;
+            }}
+            onTouchEnd={(e) => {
+              if (touchStart.current !== null) {
+                const delta = touchStart.current - e.changedTouches[0].clientX;
+                if (Math.abs(delta) > 40) changeSlide(delta > 0 ? 1 : -1);
+                touchStart.current = null;
+              }
+            }}
+          >
+            {SLIDES.map((slide, index) => (
+              <div
+                key={slide.image}
+                aria-hidden={index !== current}
+                className={`absolute inset-0 transition-opacity duration-500 ${current === index ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+              >
+                {/* React 18 requires the lowercase browser attribute for fetch priority. */}
+                <img
+                  src={slide.image}
+                  srcSet={`${slide.small} 384w, ${slide.image.replace("-768.webp", "-512.webp")} 512w, ${slide.image} 768w`}
+                  sizes="(min-width: 768px) 384px, 288px"
+                  alt={slide.alt}
+                  {...{ fetchpriority: index === 0 ? "high" : "low" }}
+                  decoding="async"
+                  width={384}
+                  height={384}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  className="object-contain w-full h-full"
                 />
-              ))}
+              </div>
+            ))}
+            <div className="absolute bottom-4 left-0 right-0 text-center z-10">
+              <span className="text-xs bg-foreground text-background px-2 py-1 rounded">
+                {SLIDES[current].title}
+              </span>
             </div>
-
-            {/* Arrows */}
             <button
-              onClick={prev}
+              onClick={() => changeSlide(-1)}
               aria-label="Previous slide"
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/60 backdrop-blur-sm flex items-center justify-center text-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background/80"
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/70 p-2 rounded-full opacity-0 group-hover:opacity-100 focus:opacity-100 transition"
             >
               <ChevronLeft size={16} />
             </button>
-
             <button
-              onClick={next}
+              onClick={() => changeSlide(1)}
               aria-label="Next slide"
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-background/60 backdrop-blur-sm flex items-center justify-center text-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background/80"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/70 p-2 rounded-full opacity-0 group-hover:opacity-100 focus:opacity-100 transition"
             >
               <ChevronRight size={16} />
             </button>
-
+            <div className="absolute bottom-8 left-0 right-0 flex justify-center">
+              {SLIDES.map((slide, index) => (
+                <button
+                  key={slide.image}
+                  onClick={() => setCurrent(index)}
+                  aria-label={`Show ${slide.title}`}
+                  aria-pressed={current === index}
+                  className="flex h-11 w-11 items-center justify-center rounded-full"
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`h-1.5 rounded-full transition-all ${current === index ? "w-6 bg-foreground" : "w-2 bg-foreground/40"}`}
+                  />
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-
+        </motion.div>
       </div>
     </section>
   );
-};
-
-export default Hero;
+}

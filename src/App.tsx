@@ -1,31 +1,54 @@
-import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "next-themes";
+import { MotionConfig } from "framer-motion";
+import Resume from "./pages/Resume";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/react';
+import { BrowserRouter, MemoryRouter, Routes, Route } from "react-router-dom";
+import PageSeo from "./components/PageSeo";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+function AppRoutes() {
+  return (
+    <>
+      <PageSeo />
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/kunal-resume" element={<Resume />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  );
+}
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
+const App = ({ url }: { url?: string }) => (
+  <ThemeProvider
+    attribute="class"
+    defaultTheme="system"
+    enableSystem
+    disableTransitionOnChange
+  >
+    <MotionConfig reducedMotion="user">
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      {url ? (
+        <MemoryRouter
+          initialEntries={[url]}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
+          <AppRoutes />
+        </MemoryRouter>
+      ) : (
+        <BrowserRouter
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
+          <AppRoutes />
+        </BrowserRouter>
+      )}
       <Analytics />
-      <SpeedInsights /> 
-    </TooltipProvider>
-  </QueryClientProvider>
+      <SpeedInsights />
+    </MotionConfig>
+  </ThemeProvider>
 );
 
 export default App;
