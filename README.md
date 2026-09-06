@@ -19,9 +19,10 @@ npm run dev -- --port 8086
 
 ## Routes and features
 
-- `/`: Hero → Experience → About (including Skills) → Projects → Contact.
+- `/`: Hero → Experience → About (including Skills) → Projects → Articles → Contact.
 - `/#experience`, `/#about`, `/#projects`, `/#contact`: section navigation.
 - `/kunal-resume`: embedded résumé viewer with PDF download and open actions.
+- `/articles`: dedicated writing page with the approved “Coming soon” state. Add published entries to `src/data/articles.ts`; the homepage displays the first three and this route displays all entries.
 - `/Kunal.pdf`: the exact résumé downloaded from the live site.
 - Three-image carousel: automatic advance, hover/focus pause, buttons and touch gestures. The white-suit portrait was AI-generated using the owner's public Instagram photos and is labeled "I am a Developer".
 - Personal, Education and Achievements tabs; animated 2+ / 3400 / 40+ / 550+ statistics.
@@ -29,6 +30,14 @@ npm run dev -- --port 8086
 - Shared light/dark theme, floating desktop dock, mobile menu, animated hero waves, scroll progress, back-to-top and PWA support. The hero appears immediately without a timed loading screen.
 - Instagram: https://www.instagram.com/the.mr_kunal
 - Email: dev.kunaljadhav@gmail.com
+
+## Firebase and Firestore
+
+The browser initializes the supplied `kunal-jadhav-portfolio` Firebase project at startup through `src/lib/firebase.ts`. The module exports `app` and the Cloud Firestore instance `db`; import `db` alongside functions from `firebase/firestore` when adding database features. Startup uses a separate JavaScript chunk so Firebase does not block the initial render.
+
+Firebase Analytics starts in production browsers after checking SDK support. It is skipped during server rendering and local development, and an Analytics failure does not stop the page. Firebase app initialization is reused during hot reloads.
+
+This setup does not create a Firestore database, deploy security rules, or write documents. Database access depends on the existing project's configuration and rules. The Articles section still uses the approved “Coming soon” state; article storage, publishing and pre-rendering from Firestore are not wired yet.
 
 ## Email delivery
 
@@ -70,7 +79,7 @@ The current role is Front-End Developer at IDSSPL Technologies Pvt. Ltd., starti
 - `src/data/seo.ts`: page titles, descriptions, canonical domain and Person / WebSite / ProfilePage structured data.
 - `src/components/PageSeo.tsx`: keeps metadata accurate during client navigation.
 - `scripts/build.mjs`: pre-renders routes and regenerates service-worker revisions after writing the HTML.
-- `public/sitemap.xml`: homepage and résumé only; section fragments are not separate pages.
+- `public/sitemap.xml`: homepage, résumé and articles page; section fragments are not separate pages.
 - `public/robots.txt`: crawl guidance and sitemap location.
 - `vercel.json`: résumé rewrite, asset cache headers and noindex headers for offer-letter images.
 - `scripts/optimize-images.mjs`: regenerates responsive WebP portraits, letter thumbnails and the social preview from local sources. Run `npm run optimize:images` after replacing source images.
@@ -80,6 +89,8 @@ The canonical production domain is `https://kunaltech.vercel.app`. If it changes
 After deployment, verify the production URLs in Google Search Console, submit `/sitemap.xml`, and inspect the homepage and résumé. Confirm unknown routes return HTTP 404 and check real-user Core Web Vitals once data is available. Local checks cannot verify Vercel's deployed status codes or guarantee indexing, rich results or rankings. The existing résumé PDF was copied from the prior live site and should be reviewed for current employment details.
 
 ## Verification
+
+Article management is available at `/admin`: Firebase Authentication protects sign-in, and Firestore rules restrict editing to a manually granted admin role. The public article section stays in Coming soon mode until Firebase is configured and `VITE_FIREBASE_ARTICLES_ENABLED=true` is set. Follow [FIREBASE_SETUP.md](FIREBASE_SETUP.md) for the account, role, rules, index and deployment steps, plus the current article SEO limitations.
 
 ```powershell
 npm run typecheck

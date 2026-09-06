@@ -24,10 +24,12 @@ export default defineConfig({
     {
       name: "preview-prerendered-routes",
       configurePreviewServer(server) {
-        // Mirror the Vercel resume rewrite during production verification.
+        // Mirror Vercel's page rewrites during production verification.
         server.middlewares.use((request, _response, next) => {
-          if (/^\/kunal-resume\/?(?:\?|$)/.test(request.url ?? "")) {
-            request.url = request.url!.replace(/^\/kunal-resume\/?/, "/kunal-resume/index.html");
+          if (/^\/(kunal-resume|articles|admin)\/?(?:\?|$)/.test(request.url ?? "")) {
+            request.url = request.url!.replace(/^\/(kunal-resume|articles|admin)\/?/, "/$1/index.html");
+          } else if (/^\/articles\/[^/?]+\/?(?:\?|$)/.test(request.url ?? "")) {
+            request.url = "/articles/index.html";
           }
           next();
         });

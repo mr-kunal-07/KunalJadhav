@@ -10,6 +10,7 @@ import {
   Twitter,
   Instagram,
   Download,
+  BookOpen,
 } from "lucide-react";
 import { FloatingDock } from "@/components/FloatingDock";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -20,6 +21,7 @@ import About from "@/components/sections/About";
 import Experience from "@/components/sections/Experience";
 import Projects from "@/components/sections/Projects";
 import Contact from "@/components/sections/Contact";
+import Articles from "@/components/sections/Articles";
 const SOCIALS = [
   {
     href: "https://www.x.com/kunaljadhav02",
@@ -153,6 +155,7 @@ function FloatingNav() {
     { title: "Experience", Icon: Briefcase, id: "experience" },
     { title: "About", Icon: User, id: "about" },
     { title: "Projects", Icon: Code, id: "projects" },
+    { title: "Articles", Icon: BookOpen, id: "articles" },
     { title: "Contact", Icon: Mail, id: "contact" },
   ].map(({ title, Icon, id }) => ({
     title,
@@ -197,6 +200,7 @@ export default function Index() {
         <Experience />
         <About />
         <Projects />
+        <Articles />
         <Contact />
       </main>
       <FloatingNav />

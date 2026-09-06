@@ -5,6 +5,25 @@
 @tailwind utilities;
 
 @layer base {
+  .article-content { overflow-wrap: anywhere; line-height: 1.85; }
+  .article-content > * + * { margin-top: 1.3em; }
+  .article-content h2 { margin-top: 1.6em; font-size: 1.6rem; font-weight: 600; line-height: 1.3; }
+  .article-content h3 { margin-top: 1.5em; font-size: 1.25rem; font-weight: 600; }
+  .article-content h4, .article-content h5, .article-content h6 { font-weight: 600; }
+  .article-content ul { list-style: disc; padding-left: 1.5rem; }
+  .article-content ol { list-style: decimal; padding-left: 1.5rem; }
+  .article-content li + li { margin-top: 0.4em; }
+  .article-content a { text-decoration: underline; text-underline-offset: 3px; }
+  .article-content pre { overflow-x: auto; border: 1px solid hsl(var(--border)); border-radius: 0.75rem; background: hsl(var(--secondary)); padding: 1.25rem; font-size: 0.85rem; }
+  .article-content :not(pre) > code { border-radius: 0.25rem; background: hsl(var(--secondary)); padding: 0.15rem 0.35rem; font-size: 0.9em; }
+  .article-content blockquote { border-left: 3px solid hsl(var(--border)); padding-left: 1.25rem; color: hsl(var(--muted-foreground)); }
+  .article-content img { max-width: 100%; height: auto; border-radius: 0.75rem; }
+  .article-content hr { border-color: hsl(var(--border)); }
+  .blog-editor .tiptap > :first-child { margin-top: 0; }
+  .blog-editor .tiptap h1 { font-size: 1.6rem; font-weight: 600; line-height: 1.3; }
+  .blog-editor .tiptap p:only-child:has(br.ProseMirror-trailingBreak)::before { content: "Share what you learned…"; float: left; height: 0; color: hsl(var(--muted-foreground)); pointer-events: none; }
+  .blog-editor .ProseMirror-selectednode { outline: 2px solid hsl(var(--foreground)); outline-offset: 3px; }
+  .blog-editor .tiptap[contenteditable="false"] { opacity: 0.6; }
   :root {
     --background: 0 0% 98%;
     --foreground: 0 0% 9%;

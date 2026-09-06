@@ -6,4 +6,5 @@
 
 - [Portfolio](https://kunaltech.vercel.app/): Projects, skills and professional experience.
 - [Resume](https://kunaltech.vercel.app/kunal-resume): Resume viewer and PDF download.
+- [Articles](https://kunaltech.vercel.app/articles): Writing space; articles coming soon.
 - [Contact](https://kunaltech.vercel.app/#contact): Contact information and message form.

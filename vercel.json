@@ -1,11 +1,18 @@
 {
   "rewrites": [
+    { "source": "/admin", "destination": "/admin/index.html" },
+    {
+      "source": "/articles",
+      "destination": "/articles/index.html"
+    },
+    { "source": "/articles/:slug", "destination": "/articles/index.html" },
     {
       "source": "/kunal-resume",
       "destination": "/kunal-resume/index.html"
     }
   ],
   "headers": [
+    { "source": "/admin/:path*", "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }] },
     {
       "source": "/assets/:path*",
       "headers": [
@@ -53,4 +60,3 @@
     }
   ]
 }
-

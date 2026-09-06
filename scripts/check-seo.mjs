@@ -5,7 +5,7 @@ import sharp from "sharp";
 
 const origin = "https://kunaltech.vercel.app";
 const titles = new Set();
-for (const [file, route, indexable] of [["index.html", "/", true], ["kunal-resume/index.html", "/kunal-resume", true], ["404.html", "/404", false]]) {
+for (const [file, route, indexable] of [["index.html", "/", true], ["kunal-resume/index.html", "/kunal-resume", true], ["articles/index.html", "/articles", true], ["admin/index.html", "/admin", false], ["404.html", "/404", false]]) {
   const html = await readFile(`dist/${file}`, "utf8");
   const { document } = new JSDOM(html).window;
   assert.equal(document.documentElement.lang, "en");
@@ -28,7 +28,10 @@ for (const [file, route, indexable] of [["index.html", "/", true], ["kunal-resum
     }
   }
   if (route === "/") {
-    for (const id of ["home", "experience", "about", "projects", "contact"]) assert.ok(document.getElementById(id), `Missing static section: ${id}`);
+    for (const id of ["home", "experience", "about", "projects", "articles", "contact"]) assert.ok(document.getElementById(id), `Missing static section: ${id}`);
+    const sectionIds = [...document.querySelectorAll("main > section")].map(section => section.id);
+    assert.equal(sectionIds[sectionIds.indexOf("projects") + 1], "articles", "Articles should immediately follow Projects");
+    assert.ok(document.querySelector('#articles a[href="/articles"]'), "Homepage must link to the articles route");
     const graph = JSON.parse(document.getElementById("profile-structured-data").textContent)["@graph"];
     const person = graph.find(node => node["@type"] === "Person");
     assert.equal(person.worksFor.name, "IDSSPL Technologies Pvt. Ltd.");
@@ -41,7 +44,7 @@ for (const [file, route, indexable] of [["index.html", "/", true], ["kunal-resum
   console.log(`SEO checks passed: ${route}`);
 }
 const sitemap = new JSDOM(await readFile("dist/sitemap.xml", "utf8"), { contentType: "application/xml" });
-assert.deepEqual([...sitemap.window.document.querySelectorAll("loc")].map(node => node.textContent), [origin + "/", origin + "/kunal-resume"]);
+assert.deepEqual([...sitemap.window.document.querySelectorAll("loc")].map(node => node.textContent), [origin + "/", origin + "/kunal-resume", origin + "/articles"]);
 assert.ok((await readFile("dist/robots.txt", "utf8")).includes(`Sitemap: ${origin}/sitemap.xml`));
 assert.match(await readFile("dist/llms.txt", "utf8"), /^# Kunal Jadhav\r?\n/);
 const social = await sharp("dist/social/kunal-jadhav.jpg").metadata();

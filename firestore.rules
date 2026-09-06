@@ -1,0 +1,61 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
+    }
+    function validText(value, max) {
+      return value is string && value.size() > 0 && value.size() <= max && value.matches('[\\s\\S]*[^\\s][\\s\\S]*');
+    }
+    function validArticle(slug) {
+      let data = request.resource.data;
+      return data.keys().hasAll(['slug', 'title', 'summary', 'category', 'content', 'status', 'createdAt', 'updatedAt', 'publishedAt'])
+        && data.keys().hasOnly(['slug', 'title', 'summary', 'category', 'content', 'status', 'createdAt', 'updatedAt', 'publishedAt'])
+        && data.slug == slug && slug.size() <= 80 && slug.matches('^[a-z0-9]+(-[a-z0-9]+)*$')
+        && validText(data.title, 120) && validText(data.summary, 320)
+        && validText(data.category, 60) && validText(data.content, 200000)
+        && data.status in ['draft', 'published']
+        && data.createdAt is timestamp && data.updatedAt == request.time
+        && (data.publishedAt == null || data.publishedAt is timestamp)
+        && (data.status != 'published' || data.publishedAt is timestamp);
+    }
+    match /admins/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow list, create, update, delete: if false;
+    }
+    match /articles/{slug} {
+      allow read: if isAdmin() || resource.data.status == 'published';
+      allow create: if isAdmin() && validArticle(slug)
+        && request.resource.data.createdAt == request.time
+        && (request.resource.data.status == 'published'
+          ? request.resource.data.publishedAt == request.time
+          : request.resource.data.publishedAt == null);
+      allow update: if isAdmin() && validArticle(slug)
+        && request.resource.data.createdAt == resource.data.createdAt
+        && (resource.data.publishedAt != null
+          ? request.resource.data.publishedAt == resource.data.publishedAt
+          : (request.resource.data.status == 'published'
+            ? request.resource.data.publishedAt == request.time
+            : request.resource.data.publishedAt == null));
+      allow delete: if isAdmin();
+      match /{kind}/{visitor} {
+        function engagementCollection() { return kind in ['views', 'likes']; }
+        function publishedArticle() {
+          return exists(/databases/$(database)/documents/articles/$(slug))
+            && get(/databases/$(database)/documents/articles/$(slug)).data.status == 'published';
+        }
+        allow read: if engagementCollection() && (isAdmin() || publishedArticle());
+        allow create: if engagementCollection() && publishedArticle()
+          && visitor.matches('^[0-9]+-[0-9]+-[a-f0-9-]{36}$')
+          && request.resource.data.keys().hasAll(['createdAt', 'articleCreatedAt'])
+          && request.resource.data.keys().hasOnly(['createdAt', 'articleCreatedAt'])
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.articleCreatedAt == get(/databases/$(database)/documents/articles/$(slug)).data.createdAt;
+        allow update: if false;
+        allow delete: if engagementCollection() && isAdmin();
+      }
+    }
+  }
+}

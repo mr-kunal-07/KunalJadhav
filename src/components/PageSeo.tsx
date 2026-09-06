@@ -21,6 +21,7 @@ export default function PageSeo() {
     setMeta("property", "og:title", page.title);
     setMeta("property", "og:description", page.description);
     setMeta("property", "og:url", SITE_URL + page.path);
+    setMeta("property", "og:type", "website");
     setMeta("name", "twitter:title", page.title);
     setMeta("name", "twitter:description", page.description);
     const canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');

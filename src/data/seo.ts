@@ -1,5 +1,11 @@
 export const SITE_URL = "https://kunaltech.vercel.app";
 export const SEO_PAGES = {
+  "/admin": {
+    title: "Article Admin | Kunal Jadhav",
+    description: "Private article management for Kunal Jadhav’s portfolio. Sign in to create drafts, edit your writing and manage published articles.",
+    path: "/admin",
+    robots: "noindex, nofollow",
+  },
   "/": {
     title: "Kunal Jadhav | Full Stack & React Developer in Mumbai",
     description: "Explore Kunal Jadhav’s portfolio: a Mumbai-based Full Stack Developer working at IDSSPL. Discover React, Next.js and Node.js projects, experience and contact details.",
@@ -18,9 +24,18 @@ export const SEO_PAGES = {
     path: "/404",
     robots: "noindex, follow",
   },
+  "/articles": {
+    title: "Articles | Kunal Jadhav",
+    description: "Explore Kunal Jadhav’s articles on frontend development, web performance, and lessons from building for the web. Read practical notes, ideas and experiences.",
+    path: "/articles",
+    robots: "index, follow, max-image-preview:large",
+  },
 };
 export function getPageSeo(pathname: string) {
   const path = pathname.replace(/\/$/, "") || "/";
+  if (/^\/articles\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(path)) {
+    return { ...SEO_PAGES["/articles"], title: "Article | Kunal Jadhav", path };
+  }
   return SEO_PAGES[path as keyof typeof SEO_PAGES] ?? SEO_PAGES["/404"];
 }
 export function getStructuredData(pathname: string) {

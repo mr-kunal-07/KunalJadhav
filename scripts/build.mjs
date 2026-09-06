@@ -11,7 +11,7 @@ await build({
   configFile: false,
   plugins: [react()],
   resolve: { alias: { "@": path.resolve("src") } },
-  build: { ssr: "src/entry-server.tsx", outDir: ".prerender", emptyOutDir: true, copyPublicDir: false, rollupOptions: { output: { entryFileNames: "entry-server.mjs" } } },
+  build: { ssr: "src/entry-server.tsx", outDir: ".prerender", emptyOutDir: true, copyPublicDir: false, rollupOptions: { output: { entryFileNames: "entry-server.mjs", inlineDynamicImports: true } } },
   ssr: { noExternal: ["next-themes", "react-intersection-observer"] },
 });
 const escape = (value) => value.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;");
@@ -32,7 +32,7 @@ const escape = (value) => value.replaceAll("&", "&amp;").replaceAll('"', "&quot;
     const data = getStructuredData(route);
     if (data) html = html.replace("</head>", `<script id="profile-structured-data" type="application/ld+json">${JSON.stringify(data).replaceAll("<", "\\u003c")}</script></head>`);
     if (route !== "/") html = html.replace(/<link\b(?=[^>]*as="image")[^>]*>/g, "");
-    const destination = route === "/" ? "dist/index.html" : route === "/404" ? "dist/404.html" : "dist/kunal-resume/index.html";
+    const destination = route === "/" ? "dist/index.html" : route === "/404" ? "dist/404.html" : path.join("dist", route.slice(1), "index.html");
     await mkdir(path.dirname(destination), { recursive: true });
     await writeFile(destination, html);
     console.log(`Prerendered ${route}: ${content.length} characters`);
